@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<VisualStudioPropertySheet
+	ProjectType="Visual C++"
+	Version="8.00"
+	Name="qtAppProperty"
+	>
+	<Tool
+		Name="VCCLCompilerTool"
+		AdditionalIncludeDirectories="&quot;E:\My PhD\VTK Programming\VTK_Project\Belajar\DesktopApp\EIGEN&quot;;&quot;E:\My PhD\VTK Programming\VTK_Project\Belajar\DesktopApp\QVTKInclude&quot;"
+		RuntimeLibrary="2"
+	/>
+	<Tool
+		Name="VCLinkerTool"
+		AdditionalDependencies="QVTK.lib QVTKWidgetPlugin.lib vtkalglib.lib vtkCharts.lib vtkCommon.lib vtkDICOMParser.lib vtkexoIIc.lib vtkexpat.lib vtkFiltering.lib vtkfreetype.lib vtkftgl.lib vtkGenericFiltering.lib vtkGeovis.lib vtkGraphics.lib vtkHybrid.lib vtkImaging.lib vtkInfovis.lib vtkIO.lib vtkjpeg.lib vtkmetaio.lib vtkpng.lib vtkproj4.lib vtkQtChart.lib vtkRendering.lib vtksqlite.lib vtksys.lib vtktiff.lib vtkverdict.lib vtkViews.lib vtkVolumeRendering.lib vtkWidgets.lib vtkzlib.lib vtkNetCDF_cxx.lib vtkNetCDF.lib vtklibxml2.lib mpistubs.lib MapReduceMPI.lib CommonCxxTests.lib"
+		AdditionalLibraryDirectories="F:\VTKforQt\bin\Release"
+		IgnoreAllDefaultLibraries="false"
+		IgnoreDefaultLibraryNames=""
+	/>
+</VisualStudioPropertySheet>

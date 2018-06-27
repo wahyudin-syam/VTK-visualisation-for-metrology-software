@@ -1,0 +1,384 @@
+25 February 2015:
+========================
+- The up, bottom, right and view works in sphere data but not in plane data!
+- Bottom, Right, and Left view are not yet programmed!
+- Output addition: number of points
+
+27 February 2015:
+========================
+- The vtkCamera->SetFocalPoint is actually set the center point of the rotation.
+- some adjustment if the data is in [um] scale -> the magnitude of the data will be very big,
+  so we need to adjust the "Plane" visualization to be able to fit "visually" to the point cloud
+- Up, Bottom, Right, and Left view should be improved!!! 
+  SOLVED: by determining the SetFocalPoint (center roattion in the centroid) and SetAzimuth (angle)
+- Plane fitting visualization should be improved!!!
+  SOLVED: by setting the SetOrigin (minX, minY, pz), SetPoint1 (minX, maxY, pz) and SetPoint2 (maxX, minY, pz)
+  
+28 February 2015
+============================
+- FINISHED: Hole_depth Algorithm calculation 
+- FINISHED: Make application icon
+- FINISHED: Memory leak has been solved for the vtkobject in algorithm toolbar
+
+1 March 2015
+===============================
+- FINISHED: Random number generator randu(long *)
+- FINISHED: sphere fitting and sphere fitting from 25 points
+- TO DO: Finish cylinder fitting, straightness, sphere form, flatness and cylindricity
+- TO DO: use vtkCubeAxesActror2D
+- TO DO: Make the tool bar icon in-active when there is no file yet opened
+- TO DO: set the opacity of the fitted geometry, such that it is transparent
+
+2 March 2015
+===============================
+- FINISHED: Cylinder fitting
+- FINISHED: Straightness, Flatness, Sphere FORM error and Cylindricity
+- TO DO: disable icon when no file is opened yet
+- TO DO: make vtkCubeAxesActor 2D
+- TO DO: Verify when user cancel the open or save dialog
+- FINSIHED: Verify when user cancel the open or save dialog
+
+3 March 2015
+===============================
+- FINISHED: disable icon when no file is opened yet
+- FINISHED: make vtkCubeAxesActor 2D
+- FINISHED: Solving problem of wraping icon in exe file
+			1. put the icon into resource folder
+			2. use: QIcon(":/resources/image_name.PNG");
+
+7 March 2015
+===============================	
+- FINISHED: Modified icon
+- FINISHED: Making and open new window from the main window (using non-modal mode) with pointer
+- sometime an error occur but not clearly stated in the error message: usually a situation in which we are
+  using a function but we do not declare the #include file (the header)
+- to send data to other window, it is better to use the public: setFunction();
+- PROBLEM: Numerical data can not be passed instead, VTK data is succesfully sent
+
+13 March 2015
+===============================		
+- FINISHED: Uniform and Gaussian random number generator
+- FINISHED: multivariate-normal random generator mvrnd()
+- FINISHED: function to calculate variogram model errorSimulator()
+- FINISHED: coding the caller for the error simulator
+		Problem:  There is a lingking problem (conflict) when the function is inside the same class functionClass.h
+					because this class has been included in mainwindow.h. the functionClass.obj has been created
+		Solution: Make the error simulator in seperate class Simulator.h 
+		          THIS IS THE REASON WHY WE SHOULD MAKE *.dll FILE, to avoid linking problem
+- TO DO: Make point animation
+
+23 March 2015
+===============================	
+- FINISHED: Coding for simulation point
+- PROBLEM: delay() is not recognized, SOLVED: #include <windows.h>, function Sleep(unsign int)
+- STRANGE ERROR!!!:
+  when we open a file from progrum run from the IDE compilation, there is an error we can not open the file
+  BUT, if we open the file from the generated EXE file, it is open??? WHY???
+  I think the problem is the MATLAB lock the file, try to generate the file from other computer or with C++
+  I tried to geenrate the file with different id of the file in MATLAB still does not work
+  THE PROBELM could be while reading the number of points!!!, whent the "number of points" is 6 digit, it works,
+  but, when the number of points is <6 digits, it does not work!!!.why!!!
+  YES, THIS IS THE PROBLEM, BUT WHY????
+- FUNCTION TEST: randn and randu (tested)
+			     mvrnd??
+			     errorSimulator???
+- Initial seeding for random data solved: long initial=(long) time(NULL) -->time.h
+			     
+24 March 2015
+====================================
+- STRANGE ERROR!!!:
+  when we open a file from progrum run from the IDE compilation, there is an error we can not open the file
+  BUT, if we open the file from the generated EXE file, it is open??? WHY???
+  I think the problem is the MATLAB lock the file, try to generate the file from other computer or with C++
+  I tried to geenrate the file with different id of the file in MATLAB still does not work
+  THE PROBELM could be while reading the number of points!!!, whent the "number of points" is 6 digit, it works,
+  but, when the number of points is <6 digits, it does not work!!!.why!!!
+  YES, THIS IS THE PROBLEM, BUT WHY????
+  THE PROBLEM OCCURS on ren->AddActor(ownDataActor);????
+  it is mention in vtkRenderer documentation that TOO SMALL data there will be a problem!!!!
+  SOLVED: VTK can not handle data <100000 points
+  SOLUTION:
+		if(num_of_points<100000){
+			strips->InsertNextCell(100001);
+		}
+		else{
+			strips->InsertNextCell(counterPoint+1);
+		}
+  	int iter;
+		if(num_of_points<100000){
+			for(iter=num_of_points;iter<=100000;iter++){
+			//for(iter=counter;iter<=100000;iter++){
+				points->InsertPoint(iter,point); //inserting the value of the last point
+				strips->InsertCellPoint(iter);
+				pointColor->InsertNextValue(point[2]*1000.0);
+			}
+		}
+  
+  THE Problemn is related to the clipping range
+  
+  ren->ResetCameraClippingRange();
+  SOLVE the problem the data is not directly shown!!!
+  OPTIONAL: we can hide/show actor with vtkActor.SetVisibility(true/false), to speed up the rendering
+  
+  VTK ALSO PROVIDE Random data generator
+  #include <vtkMath.h>
+  vtkMath::RandomSeed(time(NULL));
+  double a = vtkMath::Gaussian(0.0,2.0);
+  
+  
+- FUNCTION TEST: randn and randu (tested)
+			     mvrnd(tested)
+			     errorSimulator(tested)
+  PROBLEM FOUND: The iteration to insert the error into the m_perturbed matrix. (SOLVED)
+- SETTING PROPERTY:
+  actor->GetProperty()->SetPointSize(10.0); //set point size, actually we set from the mapper or the polydata (dataset)
+  actor->GetProperty()->SetColor(0,1,0); //gren color, actually we set from the mapper or the polydata (dataset)
+- PROBLEM is on the point simulation!!!, it only works for one iteration only
+try to make the mapper, actor, camera, locally??? -->still not work
+can we make the animation on separate window???
+Partially solved, with all global vtk variable, but only work until the second iteration
+ALL data in each iteration are the same, that is why we can not see the simulation--> MAYBE the sleep() value is too small
+
+
+26 March 2015
+====================================
+ - vtkIdType = int --> #include "vtkType.h"
+ - vtkSTLProblem: the problem is the copy data from vtkSTLReader to vtkPolyData!
+  1. sequence of object definition affect the error!!!
+	
+	vtkPolyData *STLPolyData=vtkPolyData::New();
+
+	//Visualization Pipeline
+	vtkSTLReader *STLModel= vtkSTLReader::New(); //Reader Source Object
+	STLModel->SetFileName(fileName);
+
+	//vtkPolyData *STLPolyData=vtkPolyData::New(); This should be before vtkSTLReader *STLModel= vtkSTLReader::New();!!!
+	STLPolyData=STLModel->GetOutput();
+  
+  2. Sequence in deleting the object is also effect the error!!!
+  
+  we have to use:
+  STLModel->SetOutput(STLPolyData);
+  instead of
+  STLPolyData=STLModel->GetOutput();
+
+- NEXT PROBLEM: the data can not be read from vtkPolyData!!!
+  the problme is the data are not returned from the vtkPolyData
+  SOLVED: we have to update the object vtkObject->Update()!!!
+  
+  SOLUTION:
+  
+  vtkSTLReader *STLModel= vtkSTLReader::New(); //Reader Source Object
+	STLModel->SetFileName(fileName);
+	STLModel->Update(); //THIS IS AN IMPORTANT STEP
+
+  vtkPolyData *STLPolyData=STLModel->GetOutput(); //do not allocate memory for vtkPolyData
+  
+  29 March 2015
+====================================
+- PROBLEM: the camera position is not updated when open the new file.
+  SOLVED: because the maximum and minimum value are not yet reset, so the calculation of max and min value are not working
+  
+   3 April 2015
+====================================
+- TESTING: shoa small number of points separately.
+  RESULST: The same problem, the visualization can not show points < 100000, maybe due to the clippibng range, but
+   for STL file, eventhoug the number of points is <100000, it still works.
+- START IMPLEMENTING STL GENERATION, but there is a run time error
+  IF WE REMOVE the camera->Delete(), everything will be okay!!!! Why?
+  SOLVED: We do not need to alloctae memory for the camera, just initialize as pointer without memory allocation
+  
+  THIS IS THE SOLUTION:
+  vtkCamera *camera;//=vtkCamera::New();
+  camera=ren->GetActiveCamera();
+  //camera->Delete();
+  
+  IT IS DIFFERENT LIKE THIS (in this case we should allocate the memory since we want to define the property of the camera):
+  vtkCamera *camera=vtkCamera::New();
+	camera->SetFocalPoint((maxX+minX)/2,(maxY+minY)/2,(maxZ+minZ)/2);//origin of the rotation
+	camera->SetPosition(0,0,length*2);
+	camera->Azimuth(-90.0);	
+	//camera->SetViewUp(0,1,0);	
+	ren->SetActiveCamera(camera);	
+	
+	ren->AddActor(actor);	
+	ren->ResetCameraClippingRange();
+	ren->GetRenderWindow()->Render();	
+		
+	camera->Delete();
+	
+   5 April 2015
+====================================
+- BUILDING: Plane outlier filtering data
+- BUILDING: function to show data
+  SMALL PROBLEM: the color is not changed?
+  try to re-render after removingallviewprops, but still the same problem
+  SOLUTION:
+  
+  pointCloudMapper->ScalarVisibilityOff();
+  
+  reason:
+  The colour in the actor’s property only takes effect if there is no scalar data available 
+  to the actor’s mapper. By default, the mapper’s input scalar data colours the actor,
+  and the actor’s colour is ignored. To ignore the scalar data, use the method ScalarVisibilityOff().
+  becasue when we reset the vtkPolyData pointcloud, it only reset the data points (geometry), but not the scalar data (attribut)!!!
+ 
+ 
+  2 May 2015
+=============================================
+- FINISHED: FINALLY, extracting data (points and cell) from vtkPolyData
+            Now, Points and the Triangles (faces) can be extract and we can process is as we want.
+  SOLUTION:
+    //Filling the points
+	for(vtkIdType i=0; i<STLPolyData->GetNumberOfPoints() ; i++){
+		double point[3];
+		STLPolyData->GetPoint(i,point);
+		mPoints(i,0)=point[0];
+		mPoints(i,1)=point[1];
+		mPoints(i,2)=point[2];				
+	}	
+
+	//Filling the cells	
+	for(vtkIdType i=0; i<STLPolyData->GetNumberOfCells(); i++){		
+		vtkSmartPointer<vtkIdList> cellPointIds =vtkSmartPointer<vtkIdList>::New();
+		STLPolyData->GetCellPoints(i,cellPointIds);		
+		vtkIdType *cellId;
+		cellId=cellPointIds->GetPointer(0);//we should start from the 0 position
+		mCells(i,0)=*(cellId);
+		mCells(i,1)=*(cellId+1);
+		mCells(i,2)=*(cellId+2);
+	}
+
+4 May 2015
+=============================================================================================
+- TESTING: coding for croping poly data. 
+	       clipping (croping): vtkClipPolyData
+	       cutting (delete): vtkCutter
+  PROBLEM: 1. after cutting, the points left too small, it seems we can not control the box size (implicit function box)
+           2. The points is not showing???
+           we should try by vtkIdFilter --> no need
+  SOLUTION: only works for point cloud but not working to the STL!!!
+            - maybe we have to set the normals of the data??? --> the data to clipped is not the STL data	
+  
+  SOLVED: 
+  1. make separate data editing for STL and Point Cloud           
+  2. Solution code for the cropping and deleting data:
+  vtkSmartPointer<vtkCubeSource> cubeSource=vtkSmartPointer<vtkCubeSource>::New();
+	double centerX, centerY, centerZ;
+	centerX=(maxX+minX)/2;
+	centerY=(maxY+minY)/2;
+	centerZ=(maxZ+minZ)/2;
+	cubeSource->SetCenter(centerX, centerY, centerZ);
+	cubeSource->SetCenter(maxX, centerY, centerZ);
+	cubeSource->SetXLength((maxX-minX)/2);
+	cubeSource->SetYLength(maxY-minY);
+	cubeSource->SetZLength(maxZ-minZ);
+	//cubeSource->SetXLength(((maxX-minX)/2)*0.1);
+	//cubeSource->SetYLength((maxY-minY)*0.1);
+	//cubeSource->SetZLength((maxZ-minZ)*0.1);
+	cubeSource->Update();
+
+	//cretae the function to clipp (crop the data). Creating implicit function: a box, the size is taken from the cubeSource bounding box
+	vtkSmartPointer<vtkBox> implicitCube=vtkSmartPointer<vtkBox>::New(); //This is the implicit equation to clipp the data set (polyData)
+	implicitCube->SetBounds(cubeSource->GetOutput()->GetBounds());
+	//implicitCube->SetXMax(((maxX-minX)/2),(maxY-minY),(maxZ-minZ));
+
+	//vtkIdFilter
+	//generate scalars or field data from point and cell ids
+    //vtkIdFilter is a filter to that generates scalars or field data using cell and point ids. 
+	//That is, the point attribute data scalars or field data are generated from the point ids,
+	//and the cell attribute data scalars or field data are generated from the the cell ids.
+	//vtkSmartPointer<vtkIdFilter> idFilter=vtkSmartPointer<vtkIdFilter>::New();
+	//idFilter->SetInputConnection(pointCloud);
+
+	//vtkPolyDataNormal
+	vtkSmartPointer<vtkPolyDataNormals> normals=vtkSmartPointer<vtkPolyDataNormals>::New(); //local
+	normals->SetInput(pointCloud); 
+
+	//Clipping the polydata
+	vtkSmartPointer<vtkClipPolyData> clipper = vtkSmartPointer<vtkClipPolyData>::New();
+	clipper->SetClipFunction(implicitCube);
+	//clipper->SetInput(pointCloud);
+	clipper->SetInput(normals->GetOutput());
+	clipper->InsideOutOn(); // to keep Data inside the implicit function
+	clipper->InsideOutOff(); // to keep Data outside the implicit function
+	clipper->Update();
+
+	vtkPolyData *STLPolyData=clipper->GetOutput();
+	
+	NOTE: 1. one of the goal to calculate "normals" is to have scalar data on the vtkPolyData (Dataset) to be able to be processed.
+	      2. one other option is by using vtkIdFilter --> create scalar for its point id and cell id
+	
+- FOR STL: take the point data and cell data (keep in matrix float and integer) as global data memort, then send this to show the STL 
+
+	
+5 May 2015
+================================================================================================
+- SOLVED: Deleting and Croping STL Data
+  Part 1:
+  STLData->Reset();
+	
+	vtkSmartPointer<vtkPoints> points=vtkSmartPointer<vtkPoints>::New(); //Point Data
+	vtkSmartPointer<vtkCellArray> cells=vtkSmartPointer<vtkCellArray>::New(); //Cell Data, these are the two Data set geometry
+	
+	//1. inserting point
+	double point[3];
+	for(int i=0;i<STLPolyData->GetNumberOfPoints();i++){		
+		point[0]=m(i,0);
+		point[1]=m(i,1);
+		point[2]=m(i,2);
+		points->InsertPoint(i,point);			
+	}
+
+	//2. inserting cells
+	for(int i=0;i<STLPolyData->GetNumberOfCells();i++){		
+		vtkSmartPointer<vtkTriangle> triangle = vtkSmartPointer<vtkTriangle>::New();			
+		triangle->GetPointIds()->SetId ( 0, mCells(i,0));
+		triangle->GetPointIds()->SetId ( 1, mCells(i,1));
+		triangle->GetPointIds()->SetId ( 2, mCells(i,2) );
+		cells->InsertNextCell ( triangle );
+	}
+
+	STLData->SetPoints (points);
+	STLData->SetPolys (cells);
+
+	STLData->Update();
+	
+
+  Part 2:
+  
+  //Insert the new clipped (cropped) point
+	//1. inserting new points into the global matrix m
+	int num_of_points_in_STL=0; //NOTE: vtkIdType = int
+	num_of_points_in_STL=STLPolyData->GetNumberOfPoints();
+	num_of_points=num_of_points_in_STL; //num_of_points is global variable
+	m.resize(num_of_points_in_STL,3);
+	resetMaxMinValue();		
+	ui->textEdit->setText("Number of points = "+QString::number(STLPolyData->GetNumberOfPoints() )+"\n");
+	for(vtkIdType i=0; i<STLPolyData->GetNumberOfPoints() ; i++){
+		double point[3];
+		STLPolyData->GetPoint(i,point);
+		m(i,0)=point[0];
+		m(i,1)=point[1];
+		m(i,2)=point[2];		
+		setMaxMinValue(point[0],point[1],point[2]);
+	}	
+	calcBoundingBox();	
+
+	//2. inserting new cells into the global matrix mFaces
+	num_of_cells=STLPolyData->GetNumberOfCells();
+	mCells.resize(num_of_cells,3);
+	for(vtkIdType i=0; i<STLPolyData->GetNumberOfCells(); i++){
+		vtkSmartPointer<vtkIdList> cellPointIds =vtkSmartPointer<vtkIdList>::New();
+		STLPolyData->GetCellPoints(i,cellPointIds);		
+		vtkIdType *cellId;
+		cellId=cellPointIds->GetPointer(0);//we should start from the 0 position
+		mCells(i,0)=*(cellId);//this is to access the element of the vtkIdList pointed bu cellId
+		mCells(i,1)=*(cellId+1);
+		mCells(i,2)=*(cellId+2);
+	}
+  
+
+6 May 2015
+================================================================================================
+- HOW TO MAKE INTERACTIVE SELECTION?

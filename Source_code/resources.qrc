@@ -1,0 +1,32 @@
+<RCC>
+    <qresource prefix="/">
+        <file>resources/openFile.PNG</file>
+        <file>resources/saveFile.PNG</file>
+        <file>resources/POLIMI.GIF</file>
+        <file>resources/POLIMI.ico</file>
+        <file>resources/axes.PNG</file>
+        <file>resources/cylinderFitting2.PNG</file>
+        <file>resources/cylinderFitting.PNG</file>
+        <file>resources/cylindricity.PNG</file>
+        <file>resources/flatness.PNG</file>
+        <file>resources/hole_depth.PNG</file>
+        <file>resources/lineFitting2.PNG</file>
+        <file>resources/lineFitting.PNG</file>
+        <file>resources/planeFitting2.PNG</file>
+        <file>resources/planeFitting.PNG</file>
+        <file>resources/POLIMI.PNG</file>
+        <file>resources/sphereFitting2.PNG</file>
+        <file>resources/sphereFitting.PNG</file>
+        <file>resources/sphereForm.PNG</file>
+        <file>resources/straightness.PNG</file>
+        <file>resources/simulation.PNG</file>
+        <file>resources/box_depth.PNG</file>
+        <file>resources/STLGeneration.PNG</file>
+        <file>resources/STLOpen.PNG</file>
+        <file>resources/filtering_data.PNG</file>
+        <file>resources/croping_data.PNG</file>
+        <file>resources/delete_data.PNG</file>
+        <file>resources/croping_data_stl.PNG</file>
+        <file>resources/delete_data_stl.PNG</file>
+    </qresource>
+</RCC>
